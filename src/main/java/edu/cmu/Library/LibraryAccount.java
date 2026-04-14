@@ -11,11 +11,21 @@ public class LibraryAccount {
      *
      * @param userId the ID of the user whose books are to be retrieved
      * @return an array of Book objects the user has checked out
+     * @throws IllegalArgumentException if userId is null or not in the correct format
      */
     public Book[] getBooks(String userId) {
-        String[] parts = userId.split(":");
-        String name = parts[0];
-        String id = parts[1];
-        return libraryService.getBooks(name, id);        
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        
+        String[] parts = userId.split(":", 2);
+        if (parts.length != 2 || parts[0].isEmpty() || parts[1].isEmpty()) {
+            throw new IllegalArgumentException(
+                "User ID must be in format 'libraryID:userName', got: " + userId);
+        }
+        
+        String libraryId = parts[0];
+        String userName = parts[1];
+        return libraryService.getBooks(userName, libraryId);        
     }
 }
